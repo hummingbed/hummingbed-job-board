@@ -7,11 +7,15 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $attributes = ['role' => 'candidate', 'status' => 'active'];
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'status',
     ];
 
     /**
@@ -44,6 +50,14 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'suspended_at' => 'datetime',
         ];
     }
+
+    public function candidateProfile(): HasOne { return $this->hasOne(CandidateProfile::class); }
+    public function ownedCompanies(): HasMany { return $this->hasMany(Company::class, 'owner_id'); }
+    public function applications(): HasMany { return $this->hasMany(Application::class, 'candidate_id'); }
+    public function resumes(): HasMany { return $this->hasMany(Resume::class); }
+    public function isAdmin(): bool { return $this->role === 'admin'; }
+    public function isEmployer(): bool { return in_array($this->role, ['employer','admin'], true); }
 }

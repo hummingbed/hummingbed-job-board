@@ -39,6 +39,15 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink v-if="['employer','admin'].includes($page.props.auth.user.role)" :href="route('employer.workspace')" :active="route().current('employer.*')">
+                                    Employer Workspace
+                                </NavLink>
+                                <NavLink v-if="$page.props.auth.user.role==='candidate'" :href="route('candidate.workspace')" :active="route().current('candidate.*')">
+                                    Candidate Workspace
+                                </NavLink>
+                                <NavLink v-if="$page.props.auth.user.role==='admin'" :href="route('admin.workspace')" :active="route().current('admin.*')">
+                                    Admin Control Panel
+                                </NavLink>
                             </div>
                         </div>
 
@@ -145,6 +154,15 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('dashboard')"
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="['employer','admin'].includes($page.props.auth.user.role)" :href="route('employer.workspace')" :active="route().current('employer.*')">
+                            Employer Workspace
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="$page.props.auth.user.role==='candidate'" :href="route('candidate.workspace')" :active="route().current('candidate.*')">
+                            Candidate Workspace
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-if="$page.props.auth.user.role==='admin'" :href="route('admin.workspace')" :active="route().current('admin.*')">
+                            Admin Control Panel
                         </ResponsiveNavLink>
                     </div>
 
