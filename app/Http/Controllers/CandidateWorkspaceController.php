@@ -43,9 +43,10 @@ class CandidateWorkspaceController extends Controller
     public function storeResume(Request $request)
     {
         $data = $request->validate(['name' => 'required|max:120', 'resume' => 'required|file|mimes:pdf,doc,docx|max:5120']);
-        $path = $request->file('resume')->store('resumes/'.$request->user()->id, 'public');
+        $path = $request->file('resume')->store('resumes/'.$request->user()->id);
         $first = ! Resume::where('user_id', $request->user()->id)->exists();
         Resume::create(['user_id' => $request->user()->id, 'name' => $data['name'], 'path' => $path, 'is_default' => $first]);
+
         return back()->with('success', 'Résumé uploaded.');
     }
 
@@ -56,16 +57,20 @@ class CandidateWorkspaceController extends Controller
             Resume::where('user_id', $request->user()->id)->update(['is_default' => false]);
             $resume->update(['is_default' => true]);
         });
+
         return back()->with('success', 'Default résumé updated.');
     }
 
     public function destroyResume(Request $request, Resume $resume)
     {
         abort_unless($resume->user_id === $request->user()->id, 403);
-        Storage::disk('public')->delete($resume->path);
+        Storage::delete($resume->path);
         $wasDefault = $resume->is_default;
         $resume->delete();
-        if ($wasDefault) Resume::where('user_id', $request->user()->id)->latest()->first()?->update(['is_default' => true]);
+        if ($wasDefault) {
+            Resume::where('user_id', $request->user()->id)->latest()->first()?->update(['is_default' => true]);
+        }
+
         return back()->with('success', 'Résumé removed.');
     }
 
@@ -74,12 +79,14 @@ class CandidateWorkspaceController extends Controller
         $row = DB::table('job_alerts')->where('id', $alert)->where('user_id', $request->user()->id)->first();
         abort_unless($row, 404);
         DB::table('job_alerts')->where('id', $alert)->update(['active' => ! $row->active, 'updated_at' => now()]);
+
         return back()->with('success', 'Job alert updated.');
     }
 
     public function destroyAlert(Request $request, int $alert)
     {
         DB::table('job_alerts')->where('id', $alert)->where('user_id', $request->user()->id)->delete();
+
         return back()->with('success', 'Job alert deleted.');
     }
 }

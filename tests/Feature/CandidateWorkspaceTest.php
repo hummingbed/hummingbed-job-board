@@ -24,7 +24,7 @@ class CandidateWorkspaceTest extends TestCase
 
     public function test_candidate_can_upload_and_manage_own_resumes(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
         $candidate = User::factory()->create(['role' => 'candidate', 'email_verified_at' => now()]);
 
         $this->actingAs($candidate)->post(route('candidate.resumes.store'), [
@@ -33,7 +33,7 @@ class CandidateWorkspaceTest extends TestCase
 
         $resume = Resume::firstOrFail();
         $this->assertTrue($resume->is_default);
-        Storage::disk('public')->assertExists($resume->path);
+        Storage::assertExists($resume->path);
 
         $other = User::factory()->create(['role' => 'candidate', 'email_verified_at' => now()]);
         $this->actingAs($other)->delete(route('candidate.resumes.destroy', $resume))->assertForbidden();

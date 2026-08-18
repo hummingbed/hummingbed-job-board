@@ -21,6 +21,7 @@ class PublicMarketplaceTest extends TestCase
         $employer = User::factory()->create(['role' => 'employer']);
         $company = Company::create(['owner_id' => $employer->id, 'name' => 'Acme', 'slug' => 'acme', 'verification_status' => 'verified']);
         $category = JobCategory::create(['name' => 'Technology', 'slug' => 'technology']);
+
         return JobListing::create(array_merge(['company_id' => $company->id, 'created_by' => $employer->id, 'job_category_id' => $category->id, 'title' => 'Vue Engineer', 'slug' => 'vue-engineer', 'description' => 'Build products', 'city' => 'Lagos', 'country' => 'Nigeria', 'employment_type' => 'full_time', 'salary_max' => 90000, 'status' => 'published', 'published_at' => now()], $overrides));
     }
 

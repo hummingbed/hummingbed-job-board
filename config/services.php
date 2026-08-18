@@ -18,6 +18,10 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'vercel' => [
+        'cron_secret' => env('CRON_SECRET'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

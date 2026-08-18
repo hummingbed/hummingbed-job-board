@@ -48,6 +48,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink v-if="$page.props.auth.user.role==='admin'" :href="route('admin.workspace')" :active="route().current('admin.*')">
                                     Admin Control Panel
                                 </NavLink>
+                                <NavLink :href="route('notifications.index')" :active="route().current('notifications.*')">
+                                    Notifications <span v-if="$page.props.auth.unreadNotifications" class="ml-1 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">{{$page.props.auth.unreadNotifications}}</span>
+                                </NavLink>
                             </div>
                         </div>
 
@@ -163,6 +166,9 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                         <ResponsiveNavLink v-if="$page.props.auth.user.role==='admin'" :href="route('admin.workspace')" :active="route().current('admin.*')">
                             Admin Control Panel
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('notifications.index')" :active="route().current('notifications.*')">
+                            Notifications ({{$page.props.auth.unreadNotifications}})
                         </ResponsiveNavLink>
                     </div>
 

@@ -1,0 +1,10 @@
+/.git
+/.env
+/.phpunit.cache
+/.phpunit.result.cache
+/node_modules
+/public/hot
+/storage/logs/*.log
+/tests
+/vendor
+database/database.sqlite

@@ -5,10 +5,10 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -54,10 +54,38 @@ class User extends Authenticatable
         ];
     }
 
-    public function candidateProfile(): HasOne { return $this->hasOne(CandidateProfile::class); }
-    public function ownedCompanies(): HasMany { return $this->hasMany(Company::class, 'owner_id'); }
-    public function applications(): HasMany { return $this->hasMany(Application::class, 'candidate_id'); }
-    public function resumes(): HasMany { return $this->hasMany(Resume::class); }
-    public function isAdmin(): bool { return $this->role === 'admin'; }
-    public function isEmployer(): bool { return in_array($this->role, ['employer','admin'], true); }
+    public function candidateProfile(): HasOne
+    {
+        return $this->hasOne(CandidateProfile::class);
+    }
+
+    public function ownedCompanies(): HasMany
+    {
+        return $this->hasMany(Company::class, 'owner_id');
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class, 'candidate_id');
+    }
+
+    public function resumes(): HasMany
+    {
+        return $this->hasMany(Resume::class);
+    }
+
+    public function notificationPreference(): HasOne
+    {
+        return $this->hasOne(NotificationPreference::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isEmployer(): bool
+    {
+        return in_array($this->role, ['employer', 'admin'], true);
+    }
 }
