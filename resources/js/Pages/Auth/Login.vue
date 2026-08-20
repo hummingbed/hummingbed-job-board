@@ -7,19 +7,21 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     canResetPassword: {
         type: Boolean,
     },
     status: {
         type: String,
     },
+    redirect: String,
 });
 
 const form = useForm({
     email: '',
     password: '',
     remember: false,
+    redirect: props.redirect || null,
 });
 
 const submit = () => {
@@ -35,6 +37,10 @@ const submit = () => {
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
+        </div>
+
+        <div v-if="redirect" class="mb-5 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">
+            Log in to continue your job application.
         </div>
 
         <form @submit.prevent="submit">
@@ -79,6 +85,12 @@ const submit = () => {
             </div>
 
             <div class="mt-4 flex items-center justify-end">
+                <Link
+                    :href="route('register', redirect ? { redirect } : {})"
+                    class="mr-auto text-sm font-semibold text-[#309689] hover:underline"
+                >
+                    Create account
+                </Link>
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"

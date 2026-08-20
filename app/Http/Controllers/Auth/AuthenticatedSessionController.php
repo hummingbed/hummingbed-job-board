@@ -16,11 +16,12 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
+            'redirect' => $this->safeRedirect($request->query('redirect')),
         ]);
     }
 
@@ -33,7 +34,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($this->safeRedirect($request->input('redirect')) ?? route('dashboard', absolute: false));
     }
 
     /**
@@ -48,5 +49,12 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    private function safeRedirect(?string $redirect): ?string
+    {
+        return $redirect && str_starts_with($redirect, '/') && ! str_starts_with($redirect, '//')
+            ? $redirect
+            : null;
     }
 }

@@ -28,7 +28,22 @@ class PublicMarketplaceTest extends TestCase
     public function test_public_job_filters_return_database_listings(): void
     {
         $job = $this->listing();
-        $this->get(route('jobs.index', ['q' => 'Vue', 'location' => 'Lagos']))->assertOk()->assertInertia(fn (Assert $page) => $page->component('Jobs')->where('databaseJobs.total', 1)->where('databaseJobs.data.0.id', $job->id));
+        $this->get(route('jobs.index', ['q' => 'vue', 'location' => 'Lagos']))->assertOk()->assertInertia(fn (Assert $page) => $page->component('Jobs')->where('databaseJobs.total', 1)->where('databaseJobs.data.0.id', $job->id));
+
+        $this->get(route('jobs.index', ['q' => 'acme']))->assertOk()->assertInertia(fn (Assert $page) => $page->where('databaseJobs.total', 1)->where('databaseJobs.data.0.id', $job->id));
+    }
+
+    public function test_homepage_category_link_returns_the_filtered_jobs_page(): void
+    {
+        $job = $this->listing();
+
+        $this->get('/jobs?category='.$job->job_category_id)
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Jobs')
+                ->where('filters.category', (string) $job->job_category_id)
+                ->where('databaseJobs.total', 1)
+                ->where('databaseJobs.data.0.id', $job->id));
     }
 
     public function test_job_detail_exposes_candidate_saved_and_application_state(): void

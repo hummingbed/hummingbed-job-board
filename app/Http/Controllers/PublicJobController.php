@@ -13,8 +13,13 @@ class PublicJobController extends Controller
 {
     public function index(Request $r)
     {
+        $keyword = mb_strtolower(trim($r->string('q')->toString()));
+
         $jobs = JobListing::query()->published()->with(['company:id,name,logo_path', 'category:id,name'])
-            ->when($r->string('q')->toString(), fn ($q, $v) => $q->where(fn ($x) => $x->where('title', 'like', "%$v%")->orWhere('description', 'like', "%$v%")->orWhereHas('company', fn ($c) => $c->where('name', 'like', "%$v%"))))
+            ->when($keyword, fn ($q, $v) => $q->where(fn ($x) => $x
+                ->whereRaw('LOWER(title) LIKE ?', ["%{$v}%"])
+                ->orWhereRaw('LOWER(description) LIKE ?', ["%{$v}%"])
+                ->orWhereHas('company', fn ($c) => $c->whereRaw('LOWER(name) LIKE ?', ["%{$v}%"]))))
             ->when($r->string('location')->toString(), fn ($q, $v) => $q->where(fn ($x) => $x->where('city', $v)->orWhere('country', $v)))
             ->when($r->integer('category'), fn ($q, $v) => $q->where('job_category_id', $v))
             ->when($r->input('employment_type'), fn ($q, $v) => $q->whereIn('employment_type', (array) $v))

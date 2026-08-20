@@ -6,11 +6,14 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
+const props = defineProps({ redirect: String });
+
 const form = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
+    redirect: props.redirect || null,
 });
 
 const submit = () => {
@@ -23,6 +26,10 @@ const submit = () => {
 <template>
     <GuestLayout>
         <Head title="Register" />
+
+        <div v-if="redirect" class="mb-5 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">
+            Create your candidate account to continue applying.
+        </div>
 
         <form @submit.prevent="submit">
             <div>
@@ -94,7 +101,7 @@ const submit = () => {
 
             <div class="mt-4 flex items-center justify-end">
                 <Link
-                    :href="route('login')"
+                    :href="route('login', redirect ? { redirect } : {})"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Already registered?

@@ -30,6 +30,32 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('dashboard', absolute: false));
     }
 
+    public function test_users_return_to_a_job_after_authenticating(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+            'redirect' => '/jobs/backend-engineer?apply=1',
+        ]);
+
+        $response->assertRedirect('/jobs/backend-engineer?apply=1');
+    }
+
+    public function test_login_does_not_redirect_to_an_external_url(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+            'redirect' => '//malicious.example',
+        ]);
+
+        $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();
